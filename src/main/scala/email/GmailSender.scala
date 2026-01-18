@@ -15,6 +15,8 @@ import jakarta.mail.Session
 import jakarta.mail.internet.{InternetAddress, MimeMessage}
 
 import java.io.{File, InputStreamReader}
+import java.nio.charset.StandardCharsets
+import java.nio.file.{Files, Paths}
 import java.util.Base64
 import java.util.Properties
 
@@ -29,12 +31,19 @@ final case class GmailSender(gmailConfig: GmailConfig) {
 
     if (!TOKENS_DIR.exists()) TOKENS_DIR.mkdirs()
 
-    val in = Option(getClass.getResourceAsStream(gmailConfig.clientSecretPath))
-      .getOrElse(throw new IllegalStateException(s"${gmailConfig.clientSecretPath} not found in resources"))
+    val path = Paths.get(gmailConfig.clientSecretPath) // must be absolute (or you can enforce it)
+
+    if (!path.isAbsolute)
+      throw new IllegalStateException(s"${gmailConfig.clientSecretPath} is not an absolute path")
+
+    if (!Files.exists(path))
+      throw new IllegalStateException(s"${gmailConfig.clientSecretPath} not found on filesystem")
+
+    val in = Files.newInputStream(path)
 
     try {
       val clientSecrets =
-        GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in))
+        GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in, StandardCharsets.UTF_8))
       val flow = new GoogleAuthorizationCodeFlow.Builder(
         httpTransport,
         JSON_FACTORY,
