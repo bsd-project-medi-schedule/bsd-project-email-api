@@ -6,4 +6,4 @@ COPY . .
 
 RUN ["sbt", "compile"]
 
-ENTRYPOINT ["sbt", "run"]
+ENTRYPOINT ["sbt", "runMain Main"]
