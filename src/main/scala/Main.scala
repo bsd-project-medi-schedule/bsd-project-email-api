@@ -12,13 +12,6 @@ import natstools.handlers.EmailHandler
 object Main extends IOApp.Simple with Logging {
   locally { val _ = EmailEvent }
 
-  // Set thread count via system property for Cats Effect runtime
-  // -Dcats.effect.workers=8 or defaults to 2x available processors
-  System.setProperty(
-    "cats.effect.workers",
-    Math.max(8, Runtime.getRuntime.availableProcessors() + 3).toString
-  )
-
   override def run: IO[Unit] =
     for {
       cfg <- ConfigUtils.loadAndParse[AppConfig]("application.conf", "application")
