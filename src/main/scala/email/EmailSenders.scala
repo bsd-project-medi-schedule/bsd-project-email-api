@@ -8,7 +8,7 @@ object EmailSenders {
     IO.blocking {
       val html = EmailTemplates.welcomeHtml(
         name = name,
-        ctaUrl = "https://medi-schedule.com/"
+        ctaUrl = "https://bychilie.com/"
       )
       val messageId = gmailSender.send(email, "Welcome to MediSchedule!", html)
       println(s"[EmailSenders] Welcome email sent to $email, messageId: $messageId")
@@ -16,7 +16,7 @@ object EmailSenders {
 
   def sendConfirmation(gmailSender: GmailSender, email: String, name: String, otp: String): IO[Unit] =
     IO.blocking {
-      val confirmUrl = s"http://192.168.1.132:7000/user/confirm/$otp"
+      val confirmUrl = s"https://bychilie.com/confirm-email.html?token=$otp"
       val html = EmailTemplates.confirmAccountHtml(
         name = name,
         confirmUrl = confirmUrl
@@ -36,7 +36,7 @@ object EmailSenders {
     confirmationToken: String
   ): IO[Unit] =
     IO.blocking {
-      val confirmUrl = s"http://192.168.1.132:7000/appointment/confirm/$confirmationToken"
+      val confirmUrl = s"https://bychilie.com/confirm-appointment.html?token=$confirmationToken"
       val html = EmailTemplates.appointmentConfirmHtml(
         name = name,
         appointmentTime = appointmentTime,
@@ -93,7 +93,7 @@ object EmailSenders {
     IO.blocking {
       val html = EmailTemplates.doctorWelcomeHtml(
         name = name,
-        ctaUrl = "https://medi-schedule.com/doctor"
+        ctaUrl = "https://bychilie.com/doctor"
       )
       val messageId = gmailSender.send(email, "Welcome to MediSchedule - Doctor Portal", html)
       println(s"[EmailSenders] Doctor welcome email sent to $email, messageId: $messageId")
